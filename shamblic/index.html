@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <!-- Social-feed css -->
+    <link href="css/example.css" rel="stylesheet" type="text/css">
+    <link href="css/jquery.socialfeed.css" rel="stylesheet" type="text/css">
+    <!-- font-awesome for social network icons -->
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+    <!-- This style is needed only for the plugin demo page. Do not use it in your projects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.3.16/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.3.16/addons/p5.dom.min.js"></script>
+
+    <script>
+        var label, serverResponse;	// UI elements
+
+        function setup() {
+            label = createSpan("Volume:");	// the label
+            label.position(10,20);				// position it
+            serverResponse = createSpan();	// create a div for server responses
+            serverResponse.position(label.width + 15, 20);		// position it
+            getData(3);								// make a request back to the server
+        }
+
+        // this function makes a call to the server:
+        function getData(channel) {
+            httpGet('/device/' + channel, update);
+        }
+
+        // update the page when the server responds:
+        function update(data) {
+            serverResponse.html(data);		// put the response in the span
+            getData(3);							// make another call to the server
+
+        }
+
+    </script>
+</head>
+
+<body>
+
+    <section class="stripe">
+        <div class="container field">
+            <input type="text" class="input field-left" value="" id="query">
+            <button class='button field-right' id="button-update"><i class="fa fa-refresh"></i>
+            </button>
+        </div>
+    </section>
+    <section class="feed">
+        <div class="container" id="feed">
+            <!--div class="controls">
+                <input type="field" value="#dolomiti" id="query" />
+                <input type="button" value="Update" />
+            </div-->
+            <div class="social-feed-container">
+            </div>
+        </div>
+    </section>
+<span>1</span>
+    <!-- jQuery -->
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- Codebird.js - required for TWITTER -->
+    <script src="bower_components/codebird-js/codebird.js"></script>
+    <!-- doT.js for rendering templates -->
+    <script src="bower_components/doT/doT.min.js"></script>
+    <!-- Moment.js for showing "time ago" -->
+    <script src="bower_components/moment/min/moment.min.js"></script>
+    <!-- Social-feed js -->
+    <script src="js/jquery.socialfeed.js"></script>
+    <script>
+    $(document).ready(function() {
+
+        var updateFeed = function() {
+            var initialQuery = $('#query').val();
+            initialQuery = initialQuery.replace(" ", "");
+            var queryTags = initialQuery.split(",");
+
+            var span = document.getElementsByTagName('span');
+            var lastspan =  span[span.length-1];
+            var x = lastspan.innerHTML;
+
+         //   console.log(lastspan.innerHTML);
+
+            function randomInteger(min, max) {
+                var rand = min + Math.random() * (max - min);
+                rand = Math.round(rand);
+                return rand;
+            }
+
+          //  var x = randomInteger(1, 6);
+            console.log(x);
+            var acc = '';
+            if (x > 0 && x < 6) {
+                acc = ['!228735667216']; source = 'Britain'}
+            else if (x > 5 && x < 11) {
+                acc = ['!1490007541259023']; source = 'Montenegro <br> <br> <i>Бабочка пролетает над черногорией, смотрим блог БУ2</i>'}
+            else if (x > 10 && x < 16) {
+                acc = ['!115987058416365']; source = 'Brazil'}
+            else if (x > 15 && x < 21) {
+                acc = ['!118785141514118']; source = 'Africa'} // https://www.facebook.com/newstimeafrica
+            else if (x > 20 && x < 31) {
+                acc = ['!233102880040829']; source = 'Uganda'} // https://www.facebook.com/bukedde.ug/
+            else if (x > 31) {
+                acc = ['!13312631635']; source = 'Britain'} //https://www.facebook.com/TheIndependentOnline
+
+
+            $('.social-feed-container').socialfeed({
+                // FACEBOOK
+                facebook: {
+                    accounts: acc,
+                    limit: 1,
+                    access_token: '212059782516527|a103c983c72a22f32cd6109b88bf8f11'
+                },
+
+
+                // GENERAL SETTINGS
+                length: 200,
+                show_media: true,
+                // Moderation function - if returns false, template will have class hidden
+                moderation: function(content) {
+                    return (content.text) ? content.text.indexOf('fuck') == -1 : true;
+                },
+
+                source: source,
+                //update_period: 5000,
+                // When all the posts are collected and displayed - this function is evoked
+                callback: function() {
+                    console.log('all posts are collected');
+
+                }
+            });
+        };
+        window.setInterval(function(){
+            updateFeed();
+            $('.social-feed-container div:nth-child(6)').remove()
+
+        }, 1000);
+        updateFeed();
+        $('#button-update').click(function() {
+            //first, get rid of old data/posts.
+           // $('.social-feed-container').html('');
+            // $('#feed').prepend('<div class="social-feed-container" data-href="" data-width="350"></div><br>').html(updateFeed());
+
+            //then load new posts
+            updateFeed();
+            $('.social-feed-container div:nth-child(6)').remove()
+
+        });
+
+    });
+    </script>
+
+</body>
+
+</html>
